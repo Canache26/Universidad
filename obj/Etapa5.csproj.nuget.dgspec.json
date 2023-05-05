@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Etapa5\\Etapa5.csproj": {}
+    "C:\\Universidad\\Etapa5.csproj": {}
   },
   "projects": {
-    "C:\\Etapa5\\Etapa5.csproj": {
+    "C:\\Universidad\\Etapa5.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Etapa5\\Etapa5.csproj",
+        "projectUniqueName": "C:\\Universidad\\Etapa5.csproj",
         "projectName": "Etapa5",
-        "projectPath": "C:\\Etapa5\\Etapa5.csproj",
-        "packagesPath": "C:\\Users\\herbert.diaz\\.nuget\\packages\\",
-        "outputPath": "C:\\Etapa5\\obj\\",
+        "projectPath": "C:\\Universidad\\Etapa5.csproj",
+        "packagesPath": "C:\\Users\\Herbert\\.nuget\\packages\\",
+        "outputPath": "C:\\Universidad\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\herbert.diaz\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Herbert\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

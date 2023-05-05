@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CoreUniversidad.Entidades;
+using CoreUniversidad.Util;
 
-namespace CoreUniversidad
+namespace CoreUniversidad.Entidades
 {
     public sealed class UniversidadEngine
     {
+
         public Universidad Universidad { get; set; }
 
         public UniversidadEngine()
@@ -24,32 +26,160 @@ namespace CoreUniversidad
             CargarEvaluaciones();
 
         }
-        
-
-        private void CargarEvaluaciones()
+        //Imprimir Diccionario
+        public void ImprimirDiccionario(Dictionary<LlavesDiccionario, IEnumerable<ObjectoUniversidadBase>> dic)
         {
+
+            foreach (var obj in dic)
+            {
+
+                Printer.WriteTitle(obj.Key.ToString());
+
+                foreach (var val in obj.Value)
+                {
+                    switch (obj.Key)
+                    {
+                        case LlavesDiccionario.Evaluacion:
+                            bool ImprEval = true;
+                            if (ImprEval)
+                                Console.WriteLine(val);
+                            break;
+                        case LlavesDiccionario.Universidad:
+                            Console.WriteLine("Universidad: " + val);
+                            break;
+                        case LlavesDiccionario.Alumno:
+                            Console.WriteLine("Alumno: " + val.Nombre);
+                            break;
+                        case LlavesDiccionario.Curso:
+                            var curtmp = val as Curso;
+                            if (curtmp != null)
+                            {
+                                int Count = curtmp.Alumnos.Count;
+                                Console.WriteLine("Cursos: " + val.Nombre + "Cantidad Alumno" + Count);
+                            }
+
+                            break;
+                        default:
+                            Console.WriteLine(val);
+                            break;
+
+                    }
+
+                }
+
+            }
+
+        }
+        //Diccionario de Datos
+        public Dictionary<LlavesDiccionario, IEnumerable<ObjectoUniversidadBase>> GetDiccionarioObjetos()
+        {
+            var diccionario = new Dictionary<LlavesDiccionario, IEnumerable<ObjectoUniversidadBase>>();
+
+            diccionario.Add(LlavesDiccionario.Universidad, new[] { Universidad });
+            diccionario.Add(LlavesDiccionario.Curso, Universidad.Cursos.Cast<ObjectoUniversidadBase>());
+
+            var listatmp = new List<Evaluación>();
+            var listatmpas = new List<Asignatura>();
+            var listatmpal = new List<Alumno>();
+            foreach (var cur in Universidad.Cursos)
+            {
+
+                listatmpas.AddRange(cur.Asignaturas);
+                listatmpal.AddRange(cur.Alumnos);
+
+
+                foreach (var alum in cur.Alumnos)
+                {
+                    listatmp.AddRange(alum.Evaluaciones);
+                }
+            }
+            diccionario.Add(LlavesDiccionario.Evaluacion, listatmp.Cast<ObjectoUniversidadBase>());
+
+            diccionario.Add(LlavesDiccionario.Asignatura, listatmpas.Cast<ObjectoUniversidadBase>());
+            diccionario.Add(LlavesDiccionario.Alumno, listatmpal.Cast<ObjectoUniversidadBase>());
+
+            return diccionario;
+        }
+
+        //Lista de Objectos de Polimorfica para establecer parametros de salida
+        public IReadOnlyList<ObjectoUniversidadBase> GetObjectosUniversidad(
+                            out int conteoEvaluaciones,
+
+                            bool traeEvaluaciones = true,
+                            bool traeAlumnos = true,
+                            bool traeAsignaturas = true,
+                            bool traeCursos = true
+            )
+        {
+
+            return GetObjectosUniversidad(out conteoEvaluaciones, out int dummy, out dummy, out dummy);
+        }
+
+        public IReadOnlyList<ObjectoUniversidadBase> GetObjectosUniversidad(
+                            out int conteoEvaluaciones,
+                            out int conteoCursos,
+
+                            bool traeEvaluaciones = true,
+                            bool traeAlumnos = true,
+                            bool traeAsignaturas = true,
+                            bool traeCursos = true
+            )
+        {
+
+            return GetObjectosUniversidad(out conteoEvaluaciones, out conteoCursos, out int dummy, out dummy);
+        }
+        public IReadOnlyList<ObjectoUniversidadBase> GetObjectosUniversidad(
+                            out int conteoEvaluaciones,
+                            out int conteoCursos,
+                            out int conteoAsignaturas,
+
+                            bool traeEvaluaciones = true,
+                            bool traeAlumnos = true,
+                            bool traeAsignaturas = true,
+                            bool traeCursos = true
+        )
+        {
+
+            return GetObjectosUniversidad(out conteoEvaluaciones, out conteoCursos, out conteoAsignaturas, out int dummy);
+        }
+        public IReadOnlyList<ObjectoUniversidadBase> GetObjectosUniversidad(
+                            out int conteoEvaluaciones,
+                            out int conteoCursos,
+                            out int conteoAsignaturas,
+                            out int conteoAlumnos,
+                            bool traeEvaluaciones = true,
+                            bool traeAlumnos = true,
+                            bool traeAsignaturas = true,
+                            bool traeCursos = true
+            )
+        {
+            conteoAlumnos = conteoAsignaturas = conteoEvaluaciones = 0;
+            var listObj = new List<ObjectoUniversidadBase>();
+            listObj.Add(Universidad);
+            if (traeCursos)
+                listObj.AddRange(Universidad.Cursos);
+            conteoCursos = Universidad.Cursos.Count;
             foreach (var curso in Universidad.Cursos)
             {
-                foreach (var alumno in curso.Alumnos)
-                {
-                    foreach (var asignatura in curso.Asignaturas)
-                    {
-                        Random rdn = new Random();
-                        for (int i = 0; i < 5; i++)
-                        {
-                            var ev = new Evaluación
-                            {
-                                Asignatura = asignatura,
-                                Nombre = $"{asignatura.Nombre} Ev#{i + 1}",
+                if (traeAsignaturas)
+                    listObj.AddRange(curso.Asignaturas);
 
-                                Nota = (float)(5 * rdn.NextDouble()),
-                                Alumno = alumno
-                            };
-                            alumno.Evaluaciones.Add(ev); //antes de inicializar el .Add() se debe inicializar el metodo en Alumno.
-                        }
+                conteoAsignaturas += curso.Asignaturas.Count;
+                conteoAlumnos += curso.Alumnos.Count;
+
+                if (traeAlumnos)
+                    listObj.AddRange(curso.Alumnos);
+
+                if (traeEvaluaciones)
+                {
+                    foreach (var alumno in curso.Alumnos)
+                    {
+                        listObj.AddRange(alumno.Evaluaciones);
                     }
                 }
             }
+
+            return listObj.AsReadOnly();
         }
 
         //Lista de Objectos de Polimorfica
@@ -73,6 +203,33 @@ namespace CoreUniversidad
             return listObj;
         }
 
+        #region Cargar Metodos 
+        private void CargarEvaluaciones()
+        {
+            Random rdn = new Random();
+            foreach (var curso in Universidad.Cursos)
+            {
+                foreach (var alumno in curso.Alumnos)
+                {
+                    foreach (var asignatura in curso.Asignaturas)
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            var ev = new Evaluación
+                            {
+                                Asignatura = asignatura,
+                                Nombre = $"{asignatura.Nombre} Ev#{i + 1}",
+
+                                Nota = (float)Math.Round(10 * rdn.NextDouble(), 2),
+                                Alumno = alumno
+                            };
+                            alumno.Evaluaciones.Add(ev); //antes de inicializar el .Add() se debe inicializar el metodo en Alumno.
+                        }
+                    }
+                }
+            }
+        }
+
         private void CargarAsignaturas()
         {
             foreach (var curso in Universidad.Cursos)
@@ -92,9 +249,9 @@ namespace CoreUniversidad
 
         private List<Alumno> GenerarAlumnosAlAzar(int cantidad)
         {
-            string[] nombre1 = { "Alba", "Felipa", "Eusebio", "Farid", "Donald", "Alvaro", "Nicolás" };
-            string[] apellido1 = { "Ruiz", "Sarmiento", "Uribe", "Maduro", "Trump", "Toledo", "Herrera" };
-            string[] nombre2 = { "Freddy", "Anabel", "Rick", "Murty", "Silvana", "Diomedes", "Nicomedes", "Teodoro" };
+            string[] nombre1 = { "Isabel", "Valentina", "Scarlet", "Daniel", "Teofilo", "Valerie", "Maria" };
+            string[] apellido1 = { "Canache", "Velasquez", "Rodriguez", "Rojas", "Fernandez", "Torrez", "Suarez" };
+            string[] nombre2 = { "Yadira", "Teresa", "Stephanie", "Carlos", "David", "Fabiola", "Fernanda", "Lilibeth" };
 
             var listaAlumnos = from n1 in nombre1
                                from n2 in nombre2
@@ -120,9 +277,10 @@ namespace CoreUniversidad
             Random rnd = new Random();
             foreach (var c in Universidad.Cursos)
             {
-                int cantRandom = rnd.Next(5, 20);
+                int cantRandom = rnd.Next(0, 5);
                 c.Alumnos = GenerarAlumnosAlAzar(cantRandom);
             }
         }
+        #endregion
     }
 }

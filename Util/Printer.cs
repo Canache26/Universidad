@@ -8,6 +8,10 @@ namespace CoreUniversidad.Util
         {
             WriteLine("".PadLeft(tam, '='));
         }
+        public static void PressEnterToContinue()
+        {
+            WriteLine("PRESIONE ENTER PARA CONTINUAR");
+        }
 
         public static void WriteTitle(string titulo)
         {

@@ -9,6 +9,7 @@ namespace CoreUniversidad.Entidades
         public Asignatura Asignatura  { get; set; }
 
         public float Nota { get; set; }
+        public object promedio { get; internal set; }
 
         public override string ToString()
         {

@@ -33,7 +33,7 @@ namespace CoreUniversidad.Entidades
         public void LimpiarLugar(){
             
             Printer.DrawLine();
-            Console.WriteLine("Limpiando la Escuela....");
+            Console.WriteLine("Limpiando la Universidad....");
 
             foreach (var curso in Cursos)
             {
